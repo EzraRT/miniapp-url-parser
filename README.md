@@ -1,4 +1,6 @@
-# mirai-console-plugin-template
+# miniapp-parser
+
+## 自动解析QQ分享小程序中的url
 
 [Mirai Console](https://github.com/mamoe/mirai-console) 插件模板, 使用 Kotlin + Gradle.
 
