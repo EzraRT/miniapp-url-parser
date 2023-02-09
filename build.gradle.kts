@@ -7,9 +7,10 @@ plugins {
 }
 
 group = "org.ezrart"
-version = "0.0.1"
+version = "0.0.2"
 
 repositories {
+    mavenLocal()
     if (System.getenv("CI")?.toBoolean() != true) {
         maven("https://maven.aliyun.com/repository/public") // 阿里云国内代理仓库
     }
@@ -19,4 +20,5 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("com.google.code.gson:gson:2.10")
+    testImplementation(kotlin("test"))
 }

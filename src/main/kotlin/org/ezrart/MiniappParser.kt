@@ -1,6 +1,5 @@
 package org.ezrart
 
-import com.google.gson.Gson
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import net.mamoe.mirai.event.GlobalEventChannel
@@ -8,13 +7,14 @@ import net.mamoe.mirai.event.events.FriendMessageEvent
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.message.data.content
 import net.mamoe.mirai.utils.info
+import org.ezrart.utils.Parser
 
 
 object MiniappParser : KotlinPlugin(
     JvmPluginDescription(
         id = "org.ezrart.miniapp-parser",
         name = "小程序链接解析",
-        version = "0.0.1"
+        version = "0.0.2"
     ) {
         author("EzraRT")
         info(
@@ -35,15 +35,12 @@ object MiniappParser : KotlinPlugin(
                 return@subscribeAlways
             }
             if (message.serializeToMiraiCode().startsWith("[mirai:app")) {
-                try {
-                    var appMetaData = Gson().fromJson(message.content, MiniAppData::class.java)
-                    if (ConfigManager.miniappBlackList.contains(appMetaData.extra.appid)) {
-                        return@subscribeAlways
-                    }
-                    group.sendMessage(appMetaData.meta.detail_1.qqdocurl)
-                    logger.debug("解析成功")
-                } catch (e: com.google.gson.JsonSyntaxException) {
-                    logger.warning("${message.content} 解析失败")
+                if (ConfigManager.miniappBlackList.contains(Parser.getAppID(message.content))) {
+                    return@subscribeAlways
+                }
+                val url = Parser.getUrl(message.content)
+                if (url.isNotEmpty()) {
+                    group.sendMessage(url);
                 }
             }
         }
@@ -51,16 +48,14 @@ object MiniappParser : KotlinPlugin(
         eventChannel.subscribeAlways<FriendMessageEvent> {
             // 好友信息
             if (message.serializeToMiraiCode().startsWith("[mirai:app")) {
-                try {
-                    var appMetaData = Gson().fromJson(message.content, MiniAppData::class.java)
-                    if (ConfigManager.miniappBlackList.contains(appMetaData.extra.appid)) {
-                        return@subscribeAlways
-                    }
-                    friend.sendMessage(appMetaData.meta.detail_1.qqdocurl)
-                    logger.debug("解析成功")
-                } catch (e: com.google.gson.JsonSyntaxException) {
-                    logger.warning("${message.content} 解析失败")
+                if (ConfigManager.miniappBlackList.contains(Parser.getAppID(message.content))) {
+                    return@subscribeAlways
                 }
+                val url = Parser.getUrl(message.content)
+                if (url.isNotEmpty()) {
+                    friend.sendMessage(url);
+                }
+
             }
         }
     }

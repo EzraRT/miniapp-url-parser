@@ -6,3 +6,5 @@
 /out/
 /run/
 /debug-sandbox
+/bin/
+/.run/
