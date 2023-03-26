@@ -20,7 +20,6 @@ class Parser {
                     val appMetaData = Gson().fromJson(rawMessage, QQMiniAppData::class.java)
                     message = appMetaData.meta.detail_1.qqdocurl;
                 } else if (type == AppType.TimAPP) {
-
                     val appMetaData = Gson().fromJson(rawMessage, TimMiniAppData::class.java)
                     message = appMetaData.meta.news.jumpUrl;
                 }
@@ -32,9 +31,16 @@ class Parser {
         }
 
         fun getAppID(rawMessage: String): Long {
+            val type = getAppType(rawMessage)
             val element: JsonElement = JsonParser.parseString(rawMessage)
             val root: JsonObject = element.asJsonObject
-            return root.getAsJsonObject("extra").getAsJsonPrimitive("appid").asLong;
+            var appid: Long = 0
+            appid = if (type == AppType.QQApp) {
+                root.getAsJsonObject("meta").getAsJsonObject("detail_1").getAsJsonPrimitive("appid").asLong;
+            } else {
+                root.getAsJsonObject("meta").getAsJsonObject("news").getAsJsonPrimitive("appid").asLong;
+            }
+            return appid;
         }
 
         private fun getAppType(rawMessage: String): AppType {

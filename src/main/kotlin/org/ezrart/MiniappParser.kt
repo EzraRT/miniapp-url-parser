@@ -43,6 +43,7 @@ object MiniappParser : KotlinPlugin(
                     group.sendMessage(url);
                 }
             }
+            return@subscribeAlways
         }
 
         eventChannel.subscribeAlways<FriendMessageEvent> {
@@ -57,6 +58,7 @@ object MiniappParser : KotlinPlugin(
                 }
 
             }
+            return@subscribeAlways
         }
     }
 }
